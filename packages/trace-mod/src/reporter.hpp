@@ -9,28 +9,25 @@ void init();
 /** Send a trace event */
 void send_event(u64 thread_id, u32 level, const char* msg);
 
-/** 
+/**
  * Thread-specific reporter for sending trace data to the trace server.
  */
 class Reporter {
 
+    friend class LevelScope;
+    class LevelScope {
 
-friend class LevelScope;
-class LevelScope {
+    public:
+        LevelScope(Reporter& reporter, const char* name) : reporter(&reporter) {
+            reporter.sendf("%s", name);
+            reporter.level++;
+        }
 
-public:
-    LevelScope(Reporter& reporter, const char* name) : reporter(&reporter) {
-        reporter.sendf("%s", name);
-        reporter.level++;
-    }
+        ~LevelScope() { reporter->level--; }
 
-    ~LevelScope() {
-        reporter->level--;
-    }
-
-private:
-    Reporter* reporter;
-};
+    private:
+        Reporter* reporter;
+    };
 
 public:
     static constexpr u64 INVALID_THREAD = 0xFFFFFFFFFFFFFFFF;
@@ -43,13 +40,9 @@ public:
     void sendf(const char* format, ...) const;
 
     /** Increment the level for this scope and send an enter message */
-    LevelScope scope(const char* name) {
-        return LevelScope(*this, name);
-    }
+    LevelScope scope(const char* name) { return LevelScope(*this, name); }
 
-    bool is_top() const {
-        return level == 0;
-    }
+    bool is_top() const { return level == 0; }
 
 private:
     /** Thread id for this reporter */
@@ -58,8 +51,7 @@ private:
     u32 level = 0;
 };
 
-
 /** Get the reporter for the current thread */
 Reporter& current_reporter();
 
-}
+} // namespace botw::ist::trace

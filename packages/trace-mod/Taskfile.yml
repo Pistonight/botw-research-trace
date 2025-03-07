@@ -1,0 +1,28 @@
+version: '3'
+
+includes:
+  ccpp:
+    taskfile: ../mono-dev/task/ccpp.yaml
+    internal: true
+
+tasks:
+  build:
+    cmds:
+      - megaton build
+
+  check:
+    cmds:
+      - task: ccpp:fmt-check
+
+  fix:
+    cmds:
+      - task: ccpp:fmt-fix
+
+  test:
+    cmds:
+      - python ../botw-symbols/tcp-client.py $CONSOLE_IP:5001
+
+  upload:
+    desc: Upload build to console via FTP
+    cmds:
+      - lftp $CONSOLE_IP:5000 < scripts/lftp-upload.sh

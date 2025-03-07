@@ -1,7 +1,7 @@
-#include <cstdlib>
+#include <array>
 #include <cstdarg>
 #include <cstdio>
-#include <array>
+#include <cstdlib>
 #include <nn/os.h>
 #include <nn/time.h>
 #include <toolkit/mem/unique_ptr.hpp>
@@ -17,7 +17,8 @@ static constexpr u32 MAX_REPORTERS = 0xFF;
 static Reporter default_reporter{};
 static mem::unique_ptr<nn::os::MutexType> send_mutex = nullptr;
 static mem::unique_ptr<nn::os::MutexType> array_mutex = nullptr;
-static std::array<std::pair<u64, mem::unique_ptr<Reporter>>, MAX_REPORTERS> reporters = {std::make_pair(Reporter::INVALID_THREAD, nullptr)};
+static std::array<std::pair<u64, mem::unique_ptr<Reporter>>, MAX_REPORTERS>
+    reporters = {std::make_pair(Reporter::INVALID_THREAD, nullptr)};
 
 void init() {
     send_mutex = mem::make_unique<nn::os::MutexType>();
@@ -27,10 +28,10 @@ void init() {
 }
 
 void send_event(u64 thread_id, u32 level, const char* msg) {
-    toolkit::ScopedLock lock { send_mutex.get() };
+    toolkit::ScopedLock lock{send_mutex.get()};
 
     // get the timestamp
-    nn::time::PosixTime time { 0 };
+    nn::time::PosixTime time{0};
     nn::Result r = nn::time::StandardUserSystemClock::GetCurrentTime(&time);
     if (r.IsFailure()) {
         time.time = 0;
@@ -50,7 +51,7 @@ Reporter& current_reporter() {
         auto& entry = reporters[i];
         if (entry.second == nullptr) {
             // not found, make a new one
-            toolkit::ScopedLock lock { array_mutex.get() };
+            toolkit::ScopedLock lock{array_mutex.get()};
             if (reporters[i].second != nullptr) {
                 // another thread beat us to it, try searching again
                 continue;
@@ -84,4 +85,4 @@ void Reporter::send(const char* msg) const {
     send_event(thread_id, level, msg);
 }
 
-}
+} // namespace botw::ist::trace

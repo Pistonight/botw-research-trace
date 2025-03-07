@@ -1,0 +1,52 @@
+[module]
+name = "trace"
+title-id = 0x01007ef00011e000
+
+[build]
+sources = [
+    "src",
+    "../botw-symbols/src",
+]
+
+includes = [
+    "src",
+    "../botw-decomp/src",
+    "../botw-decomp/lib/agl/include",
+    "../botw-decomp/lib/gsys/include",
+    "../botw-decomp/lib/sead/include",
+    "../botw-decomp/lib/NintendoSDK/include",
+    "../botw-symbols/include",
+]
+ldscripts = [
+    "../botw-symbols/ld/ld150.ld",
+    "../botw-symbols/ld/toolkit150.ld",
+]
+
+[build.flags]
+c = [
+    "<default>",
+    "-DNNSDK",
+    "-DSWITCH",
+    "-D__SWITCH__",
+    "-DNN_SDK_MAJOR=4",
+    "-DNN_SDK_MINOR=4",
+    "-DNN_SDK_PATCH=0",
+    "-DNN_WARE_MAJOR=4",
+    "-DNN_WARE_MINOR=4",
+    "-DNN_WARE_PATCH=0",
+    "-DBOTW_VERSION=150",
+    "-DBOTWTOOLKIT_TCP_SEND",
+]
+cxx = [
+    "<default>",
+    "-Wno-invalid-offsetof",
+]
+
+
+[check]
+symbols = [
+    "../botw-symbols/symbols/150/main.syms",
+    "../botw-symbols/symbols/150/rtld.syms",
+    "../botw-symbols/symbols/150/sdk.syms",
+    "../botw-symbols/symbols/150/subsdk0.syms",
+]
