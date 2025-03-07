@@ -2,3 +2,11 @@
 	path = packages/mono-dev
 	url = https://github.com/Pistonight/mono-dev
 	branch = main
+[submodule "botw"]
+	path = packages/botw-decomp
+	url = https://github.com/Pistonight/botw-decomp
+	branch = dev
+[submodule "botw-symbols"]
+	path = packages/botw-symbols
+	url = https://github.com/Pistonight/botw-symbols
+	branch = main
