@@ -1,0 +1,43 @@
+version: '3'
+
+env:
+  # IP of your console on the local network
+  CONSOLE_IP: 192.168.0.161
+dotenv: [".env"]
+
+includes:
+  mod:
+    taskfile: ./packages/trace-mod
+    dir: ./packages/trace-mod
+
+  viewer:
+    taskfile: ./packages/trace-view
+    dir: ./packages/trace-view
+
+tasks:
+  install-cargo-extra-tools:
+    alias: [icets]
+    cmds:
+      - cargo install magoo fd
+
+  install:
+    cmds:
+      - magoo install
+
+  push:
+    desc: Build and upload the mod to console via FTP
+    cmds:
+      - task: mod:build
+      - task: mod:upload
+
+  live:
+    desc: Connect to the trace mod currently running on the console (-- FILE)
+    cmds:
+      - cargo run --bin trace-view --release -- -c $CONSOLE_IP:5001 {{.CLI_ARGS}}
+
+  open:
+    desc: Open a previously saved trace file (-- FILE)
+    cmds:
+      - cargo run --bin trace-view --release -- {{.CLI_ARGS}}
+    
+
